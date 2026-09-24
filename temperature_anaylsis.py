@@ -2,8 +2,8 @@ import json
 import os
 from pathlib import Path
 
-def load_weather_date():
-  with open(os.path.join(Path(__file__).parent.resolve(), 'ep_weather_data.json'), 'r') as file:
+def load_weather_data():
+    with open(os.path.join(Path(__file__).parent.resolve(), 'ep_weather_data.json'), 'r') as file:
         yearly_data = json.load(file)
     return yearly_data
 
@@ -16,7 +16,7 @@ def max(data):
 
   return maximum
 
-def mind(data):
+def min(data):
   minimum = data[0]
 
   for value in data:
@@ -31,7 +31,29 @@ def mean(data):
   for value in data:
       total += value
 
-return total / len(data)
+  return total / len(data)
+
+def monthly_min(month):
+  minimum = min(month[0])
+
+  for day in month:
+      day_min = min(day)
+
+      if day_min < minimum:
+          minimum = day_min
+
+  return minimum
+
+def monthly_max(month):
+    maximum = max(month[0])
+
+    for day in month:
+        day_max = max(day)
+
+        if day_max > maximum:
+            maximum = day_max
+
+    return maximum
 
 def main():
     yearly_data = load_weather_data()
@@ -50,5 +72,13 @@ def main():
     print("December 30th Min =", min(december_30),
           "Max =", max(december_30),
           "Mean =", mean(december_30))
+  
+    print()
+
+    print("February Min =", monthly_min(yearly_data[1]),
+          "Max =", monthly_max(yearly_data[1]))
+
+    print("August Min =", monthly_min(yearly_data[7]),
+          "Max =", monthly_max(yearly_data[7]))
 
 main()
