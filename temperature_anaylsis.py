@@ -2,6 +2,8 @@ import json
 import os
 from pathlib import Path
 import numpy as np
+import time
+import datetime
 
 def load_weather_data():
     with open(os.path.join(Path(__file__).parent.resolve(), 'ep_weather_data.json'), 'r') as file:
@@ -9,41 +11,42 @@ def load_weather_data():
     return yearly_data
 
 def max(data):
-  maximum = data[0]
+    maximum = data[0]
 
-  for value in data:
-    if value > maximum:
-        maximum = value
+    for value in data:
+        if value > maximum:
+            maximum = value
 
-  return maximum
+    return maximum
 
 def min(data):
-  minimum = data[0]
+    minimum = data[0]
 
-  for value in data:
-    if value < minimum:
-        minimum = value
+    for value in data:
+        if value < minimum:
+            minimum = value
 
-  return minimum
+    return minimum
 
 def mean(data):
-  total = 0
+    total = 0
 
-  for value in data:
-      total += value
+    for value in data:
+        total += value
 
-  return total / len(data)
+    return total / len(data)
+
 
 def monthly_min(month):
-  minimum = min(month[0])
+    minimum = min(month[0])
 
-  for day in month:
-      day_min = min(day)
+    for day in month:
+        day_min = min(day)
 
-      if day_min < minimum:
-          minimum = day_min
+        if day_min < minimum:
+            minimum = day_min
 
-  return minimum
+    return minimum
 
 def monthly_max(month):
     maximum = max(month[0])
@@ -59,12 +62,22 @@ def monthly_max(month):
 def above_90(array):
     return np.sum(array > 90)
 
-
 def days_above_90(month):
     daily_max = np.max(month, axis=1)
     return above_90(daily_max)
     
+def list_test(yearly_data):
+    for month in yearly_data:
+        monthly_min(month)
+        monthly_max(month)
+
+def array_test(yearly_array):
+    for month in yearly_array:
+        np.min(month)
+        np.max(month)
+        
 def main():
+    
     yearly_data = load_weather_data()
     yearly_array = np.array(yearly_data)
     
@@ -127,4 +140,18 @@ def main():
     print("There were", days_above_90(yearly_array[10]),
           "days above 90 in November")
 
+    print()
+
+    start = time.time()
+    list_test(yearly_data)
+    end = time.time()
+
+    print("list test time =", datetime.timedelta(seconds=end-start))
+
+    start = time.time()
+    array_test(yearly_array)
+    end = time.time()
+
+    print("array test time =", datetime.timedelta(seconds=end-start))
+    
 main()
