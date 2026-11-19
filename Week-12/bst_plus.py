@@ -17,45 +17,73 @@ class BstPlus(BinarySearchTree):
     """
 
     def mirror(self) -> None:
-        """
-        swap all of the left and right children in the tree
-        this is an in-place operation (meaning that you do not need to copy the tree)
-        """
-        pass 
+        """Switch the left and right sides of every node."""
+        def swap(node):
+            if node is None:
+                return
+
+            left = node.left()
+            node.set_left(node.right())
+            node.set_right(left)
+
+            swap(node.left())
+            swap(node.right())
+
+        swap(self._root)
 
     def countLeaves(self) -> int:
-        """
-        returns the number of leaves in this tree
-        """
-        pass
+        """Count nodes that have no children."""
+        def count(node):
+            if node is None:
+                return 0
+            if node.left() is None and node.right() is None:
+                return 1
+            return count(node.left()) + count(node.right())
+
+        return count(self._root)
 
     def height(self) -> int:
-        """
-        returns the height (number of levels) in the tree
-        an empty tree has height = 0
-        """
-        pass
+        """Count the levels along the longest path."""
+        def levels(node):
+            if node is None:
+                return 0
+
+            left = levels(node.left())
+            right = levels(node.right())
+            return 1 + max(left, right)
+
+        return levels(self._root)
 
     def min(self) -> any:
-        """
-        returns the value of the minimum node of the tree
-        """
-        pass
+        """Find the smallest value in the tree."""
+        if self._root is None:
+            raise ValueError('Tree is empty')
+
+        node = self._root
+        while node.left() is not None:
+            node = node.left()
+        return node.value()
 
     def max(self) -> any:
-        """
-        returns the value of the maximum node of the tree
-        """
-        pass    
+        """Find the largest value in the tree."""
+        if self._root is None:
+            raise ValueError('Tree is empty')
+
+        node = self._root
+        while node.right() is not None:
+            node = node.right()
+        return node.value()
 
     def reversed(self):
-        """
-        An iterator over the values in the BST in reverse order.
-        This method should "yield" values rather than "return"-ing them
-        See __iter__ from bst.py for an example to work from
-        This should produce elements in the exact opposite order of __iter__
-        """
-        yield None
+        """Visit the values from largest to smallest."""
+        def visit(node):
+            if node is None:
+                return
+            yield from visit(node.right())
+            yield node.value()
+            yield from visit(node.left())
+
+        yield from visit(self._root)
 
 
 #-----------------------------------
